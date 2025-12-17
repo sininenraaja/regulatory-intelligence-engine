@@ -5,6 +5,7 @@ import { Regulation } from '@/types';
 import { RegulationCard } from './components/RegulationCard';
 
 export default function Home() {
+  // Regulatory Intelligence Engine - Kemira Dashboard
   const [regulations, setRegulations] = useState<Regulation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
