@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --kemira-primary: #003D7A;
+  --kemira-secondary: #0066CC;
+  --kemira-accent: #00A3E0;
+  --kemira-gray-dark: #4A4A4A;
+  --kemira-gray-medium: #8C8C8C;
+  --kemira-gray-light: #E5E5E5;
+  --impact-high: #DC2626;
+  --impact-medium: #F59E0B;
+  --impact-low: #10B981;
+  --impact-none: #9CA3AF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* Kemira brand color utilities */
+.text-kemira-primary {
+  color: var(--kemira-primary);
+}
+
+.bg-kemira-primary {
+  background-color: var(--kemira-primary);
+}
+
+.border-kemira-primary {
+  border-color: var(--kemira-primary);
+}
+
+.hover\:bg-kemira-primary:hover {
+  background-color: var(--kemira-primary);
+}
