@@ -28,25 +28,37 @@ export async function generateDOCX(
   // Header
   sections.push(
     new Paragraph({
-      text: options?.companyName || 'Kemira Oyj',
-      bold: true,
-      size: 28,
+      children: [
+        new TextRun({
+          text: options?.companyName || 'Kemira Oyj',
+          bold: true,
+          size: 56,
+        }),
+      ],
       spacing: { after: 0 },
     }),
     new Paragraph({
-      text: options?.division || 'Water Treatment Chemicals Division',
-      size: 24,
+      children: [
+        new TextRun({
+          text: options?.division || 'Water Treatment Chemicals Division',
+          size: 48,
+          color: '666666',
+        }),
+      ],
       spacing: { after: 400 },
-      color: '666666',
     })
   );
 
   // Title
   sections.push(
     new Paragraph({
-      text: regulation.title,
-      bold: true,
-      size: 26,
+      children: [
+        new TextRun({
+          text: regulation.title,
+          bold: true,
+          size: 52,
+        }),
+      ],
       spacing: { after: 200 },
     })
   );
@@ -56,7 +68,7 @@ export async function generateDOCX(
     width: { size: 100, type: WidthType.PERCENTAGE },
     rows: [
       new TableRow({
-        cells: [
+        children: [
           new TableCell({
             children: [new Paragraph('Published:')],
             width: { size: 25, type: WidthType.PERCENTAGE },
@@ -93,13 +105,15 @@ export async function generateDOCX(
           }),
           new TableCell({
             children: [
-              new Paragraph(
-                new TextRun({
-                  text: (regulation.impact_level || 'None').toUpperCase(),
-                  bold: true,
-                  color: getImpactColorHex(regulation.impact_level),
-                })
-              ),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: (regulation.impact_level || 'None').toUpperCase(),
+                    bold: true,
+                    color: getImpactColorHex(regulation.impact_level),
+                  }),
+                ],
+              }),
             ],
             width: { size: 25, type: WidthType.PERCENTAGE },
             borders: {
@@ -112,7 +126,7 @@ export async function generateDOCX(
         ],
       }),
       new TableRow({
-        cells: [
+        children: [
           new TableCell({
             children: [new Paragraph('Relevance Score:')],
             width: { size: 25, type: WidthType.PERCENTAGE },
@@ -147,13 +161,15 @@ export async function generateDOCX(
           }),
           new TableCell({
             children: [
-              new Paragraph(
-                new TextRun({
-                  text: regulation.source_url,
-                  color: '0066CC',
-                  underline: {},
-                })
-              ),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: regulation.source_url,
+                    color: '0066CC',
+                    underline: {},
+                  }),
+                ],
+              }),
             ],
             width: { size: 25, type: WidthType.PERCENTAGE },
             borders: {
@@ -177,9 +193,13 @@ export async function generateDOCX(
 
     sections.push(
       new Paragraph({
-        text: 'Executive Summary',
-        bold: true,
-        size: 24,
+        children: [
+          new TextRun({
+            text: 'Executive Summary',
+            bold: true,
+            size: 48,
+          }),
+        ],
         spacing: { before: 200, after: 100 },
       }),
       new Paragraph({
@@ -191,9 +211,13 @@ export async function generateDOCX(
     // Key Changes
     sections.push(
       new Paragraph({
-        text: 'Key Changes:',
-        bold: true,
-        size: 22,
+        children: [
+          new TextRun({
+            text: 'Key Changes:',
+            bold: true,
+            size: 44,
+          }),
+        ],
         spacing: { after: 100 },
       })
     );
@@ -213,9 +237,13 @@ export async function generateDOCX(
     // Affected Areas
     sections.push(
       new Paragraph({
-        text: 'Affected Business Areas:',
-        bold: true,
-        size: 22,
+        children: [
+          new TextRun({
+            text: 'Affected Business Areas:',
+            bold: true,
+            size: 44,
+          }),
+        ],
         spacing: { before: 200, after: 100 },
       })
     );
@@ -234,9 +262,13 @@ export async function generateDOCX(
     sections.push(new Paragraph({ text: '' }));
     sections.push(
       new Paragraph({
-        text: 'Impact Analysis',
-        bold: true,
-        size: 24,
+        children: [
+          new TextRun({
+            text: 'Impact Analysis',
+            bold: true,
+            size: 48,
+          }),
+        ],
         spacing: { before: 200, after: 100 },
       }),
       new Paragraph({
@@ -261,18 +293,26 @@ export async function generateDOCX(
     if (analysis.action_items.length > 0) {
       sections.push(
         new Paragraph({
-          text: 'Required Action Items',
-          bold: true,
-          size: 24,
+          children: [
+            new TextRun({
+              text: 'Required Action Items',
+              bold: true,
+              size: 48,
+            }),
+          ],
           spacing: { before: 200, after: 100 },
         })
       );
 
       const actionRows = [
         new TableRow({
-          cells: [
+          children: [
             new TableCell({
-              children: [new Paragraph(new TextRun({ text: 'Department', bold: true }))],
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: 'Department', bold: true })],
+                }),
+              ],
               width: { size: 20, type: WidthType.PERCENTAGE },
               shading: { fill: '003D7A' },
               borders: {
@@ -283,7 +323,11 @@ export async function generateDOCX(
               },
             }),
             new TableCell({
-              children: [new Paragraph(new TextRun({ text: 'Action', bold: true }))],
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: 'Action', bold: true })],
+                }),
+              ],
               width: { size: 40, type: WidthType.PERCENTAGE },
               shading: { fill: '003D7A' },
               borders: {
@@ -294,7 +338,11 @@ export async function generateDOCX(
               },
             }),
             new TableCell({
-              children: [new Paragraph(new TextRun({ text: 'Deadline', bold: true }))],
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: 'Deadline', bold: true })],
+                }),
+              ],
               width: { size: 20, type: WidthType.PERCENTAGE },
               shading: { fill: '003D7A' },
               borders: {
@@ -305,7 +353,11 @@ export async function generateDOCX(
               },
             }),
             new TableCell({
-              children: [new Paragraph(new TextRun({ text: 'Priority', bold: true }))],
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text: 'Priority', bold: true })],
+                }),
+              ],
               width: { size: 20, type: WidthType.PERCENTAGE },
               shading: { fill: '003D7A' },
               borders: {
@@ -326,7 +378,7 @@ export async function generateDOCX(
 
         actionRows.push(
           new TableRow({
-            cells: [
+            children: [
               new TableCell({
                 children: [new Paragraph(item.department)],
                 width: { size: 20, type: WidthType.PERCENTAGE },
@@ -359,13 +411,15 @@ export async function generateDOCX(
               }),
               new TableCell({
                 children: [
-                  new Paragraph(
-                    new TextRun({
-                      text: item.priority.toUpperCase(),
-                      bold: true,
-                      color: getPriorityColorHex(item.priority),
-                    })
-                  ),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: item.priority.toUpperCase(),
+                        bold: true,
+                        color: getPriorityColorHex(item.priority),
+                      }),
+                    ],
+                  }),
                 ],
                 width: { size: 20, type: WidthType.PERCENTAGE },
                 borders: {
@@ -388,11 +442,15 @@ export async function generateDOCX(
   sections.push(new Paragraph({ text: '' }));
   sections.push(
     new Paragraph({
-      text: `Generated on ${new Date().toLocaleDateString()} by Regulatory Intelligence Engine`,
-      italics: true,
-      size: 18,
+      children: [
+        new TextRun({
+          text: `Generated on ${new Date().toLocaleDateString()} by Regulatory Intelligence Engine`,
+          italics: true,
+          size: 36,
+          color: '999999',
+        }),
+      ],
       spacing: { before: 200 },
-      color: '999999',
     })
   );
 

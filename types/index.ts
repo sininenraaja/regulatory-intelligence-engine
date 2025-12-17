@@ -40,6 +40,7 @@ export interface FullAnalysis {
   estimated_effort: string;
   financial_impact: string;
   risks_if_ignored: string;
+  kemira_specific_considerations?: string;
 }
 
 export interface RegulationWithAnalysis extends Regulation {

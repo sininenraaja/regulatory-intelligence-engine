@@ -181,20 +181,22 @@ export async function getAllRegulations(options?: {
   const limit = options?.limit ?? 20;
   const offset = options?.offset ?? 0;
 
-  let query = sql`SELECT * FROM regulations WHERE 1=1`;
+  // Build WHERE clause conditions
+  let whereConditions = '1=1';
 
   if (options?.impact_level && options.impact_level !== 'all') {
-    query = sql`${query} AND impact_level = ${options.impact_level}`;
+    whereConditions += ` AND impact_level = '${options.impact_level}'`;
   }
 
   if (options?.search) {
-    const searchTerm = `%${options.search}%`;
-    query = sql`${query} AND (title ILIKE ${searchTerm} OR description ILIKE ${searchTerm})`;
+    const searchTerm = `%${options.search.replace(/'/g, "''")}%`;
+    whereConditions += ` AND (title ILIKE '${searchTerm}' OR description ILIKE '${searchTerm}')`;
   }
 
-  // Add sorting
+  // Build sort clause
+  let orderClause = 'ORDER BY published_date DESC';
   if (options?.sort === 'impact') {
-    query = sql`${query} ORDER BY
+    orderClause = `ORDER BY
       CASE impact_level
         WHEN 'high' THEN 1
         WHEN 'medium' THEN 2
@@ -203,29 +205,20 @@ export async function getAllRegulations(options?: {
       END ASC,
       published_date DESC`;
   } else if (options?.sort === 'relevance') {
-    query = sql`${query} ORDER BY relevance_score DESC NULLS LAST, published_date DESC`;
-  } else {
-    query = sql`${query} ORDER BY published_date DESC`;
+    orderClause = 'ORDER BY relevance_score DESC NULLS LAST, published_date DESC';
   }
 
   // Get total count
-  const countResult = await sql`SELECT COUNT(*) as count FROM regulations WHERE 1=1 ${
-    options?.impact_level && options.impact_level !== 'all'
-      ? sql`AND impact_level = ${options.impact_level}`
-      : sql``
-  } ${
-    options?.search
-      ? sql`AND (title ILIKE ${'%' + options.search + '%'} OR description ILIKE ${'%' + options.search + '%'})`
-      : sql``
-  }`;
+  const countResult = await sql.query(
+    `SELECT COUNT(*) as count FROM regulations WHERE ${whereConditions}`
+  );
 
   const total = (countResult.rows[0]?.count as number) || 0;
 
   // Get paginated results
-  const result = await sql`
-    ${query}
-    LIMIT ${limit} OFFSET ${offset}
-  `;
+  const result = await sql.query(
+    `SELECT * FROM regulations WHERE ${whereConditions} ${orderClause} LIMIT ${limit} OFFSET ${offset}`
+  );
 
   return {
     regulations: result.rows as Regulation[],

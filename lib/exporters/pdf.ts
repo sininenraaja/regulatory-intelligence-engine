@@ -113,11 +113,11 @@ function addHeader(
 
   doc.text(`Relevance Score: ${regulation.relevance_score || 'N/A'}/100`, 40);
 
-  doc.text(`Source: ${regulation.source_url}`, 40, {
+  doc.fillColor(KEMIRA_SECONDARY).text(`Source: ${regulation.source_url}`, 40, undefined, {
     link: regulation.source_url,
     underline: true,
-    color: KEMIRA_SECONDARY,
   });
+  doc.fillColor('000000');
 
   doc.moveDown(2);
 }
@@ -242,7 +242,7 @@ function addImpactAnalysis(
 
   doc.fontSize(10)
     .font('Helvetica')
-    .text(analysis.risks_if_ignored, 60, {
+    .text(analysis.risks_if_ignored, 60, undefined, {
       width: sectionWidth - 20,
     });
 

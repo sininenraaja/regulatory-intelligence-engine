@@ -10,10 +10,10 @@ import { generateDOCX } from '@/lib/exporters/docx';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { format: string } }
+  { params }: { params: Promise<{ format: string }> }
 ) {
   try {
-    const { format } = params;
+    const { format } = await params;
     const regulationId = request.nextUrl.searchParams.get('id');
 
     if (!regulationId) {
@@ -75,7 +75,7 @@ export async function GET(
     console.log(`[Export] Generated ${format.toUpperCase()} (${buffer.length} bytes) for regulation ${id}`);
 
     // Return file with appropriate headers
-    return new NextResponse(buffer, {
+    return new NextResponse(buffer as any, {
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${filename}"`,
