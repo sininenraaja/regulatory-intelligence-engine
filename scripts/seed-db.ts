@@ -209,7 +209,7 @@ async function seedDatabase() {
           ${reg.title},
           ${reg.description},
           ${reg.source_url},
-          ${new Date(reg.published_date)},
+          ${reg.published_date},
           ${reg.finlex_id},
           ${reg.relevance_score},
           ${reg.relevance_reasoning},
@@ -241,7 +241,7 @@ async function seedDatabase() {
               ${regulationId},
               ${item.department},
               ${item.action},
-              ${item.deadline ? new Date(item.deadline) : null},
+              ${item.deadline || null},
               ${item.priority},
               'pending',
               NOW()
