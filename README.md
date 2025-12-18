@@ -229,3 +229,4 @@ const RELEVANCE_THRESHOLD = 40; // regulations with score > 40 get full analysis
 ---
 
 Built with ❤️ by Anthropic Claude Code
+# Deployment attempt at to 18. joulu 2025  8.11.12
