@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:init": "POSTGRES_URL='${POSTGRES_URL:-}' tsx scripts/init-db.ts",
+    "db:seed": "POSTGRES_URL='${POSTGRES_URL:-}' tsx scripts/seed-db.ts",
+    "test:monitor": "POSTGRES_URL='${POSTGRES_URL:-}' tsx scripts/test-monitor.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
