@@ -8,9 +8,10 @@ import { ExportButtons } from '@/app/components/ExportButtons';
 export default async function DetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = parseInt(params.id, 10);
+  const { id: idStr } = await params;
+  const id = parseInt(idStr, 10);
 
   if (isNaN(id)) {
     notFound();
