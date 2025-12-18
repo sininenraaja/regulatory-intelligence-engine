@@ -8,10 +8,11 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-# Scheduled function: Monitor Finlex RSS every 6 hours
+# Scheduled function: Monitor Finlex RSS every 24 hours (daily at midnight UTC)
 [[functions]]
   node_bundler = "esbuild"
 
 # Environment configuration for scheduled function
 [functions."api-monitor"]
   external_node_modules = ["rss-parser"]
+  schedule = "0 0 * * *"

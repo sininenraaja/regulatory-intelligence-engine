@@ -11,7 +11,7 @@
 
 Phase 1 establishes the core automated monitoring and analysis pipeline:
 
-1. **Automated RSS Monitoring** - Fetches regulations from Finlex every 6 hours
+1. **Automated RSS Monitoring** - Fetches regulations from Finlex every 24 hours
 2. **AI-Powered Relevance Scoring** - Analyzes each regulation with Gemini API
 3. **Error Handling & Observability** - Structured logging, health checks, monitoring
 
@@ -157,7 +157,7 @@ curl http://localhost:3000/api/monitor?secret=test-local-only
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Every 6 Hours (Cron)                     │
+│                    Every 24 Hours (Daily Cron)              │
 └────────────────────────┬────────────────────────────────────┘
                          │
                          ▼
@@ -323,7 +323,7 @@ git push origin main
 # - POSTGRES_URL
 # - CRON_SECRET
 
-# 4. Monitor runs automatically every 6 hours
+# 4. Monitor runs automatically every 24 hours (daily)
 # Check /api/health endpoint to verify
 ```
 
@@ -518,7 +518,7 @@ git add .
 git commit -m "Phase 1 Implementation: Production Foundation
 
 Features:
-- Automated Finlex RSS monitoring every 6 hours
+- Automated Finlex RSS monitoring every 24 hours (daily)
 - AI-powered relevance scoring with Gemini
 - Structured logging and health checks
 - Gemini API caching to reduce costs
@@ -545,7 +545,7 @@ git push origin main
 # Check health endpoint
 curl https://your-site.com/api/health
 
-# If monitoring is scheduled, wait 6 hours for first run
+# If monitoring is scheduled, wait 24 hours for first run
 # Or manually trigger:
 curl -X POST https://your-site.com/api/monitor \
   -H "Authorization: Bearer YOUR_CRON_SECRET"
