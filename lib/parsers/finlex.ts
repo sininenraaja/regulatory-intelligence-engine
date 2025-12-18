@@ -1,10 +1,8 @@
-import Parser from 'rss-parser';
 import { Regulation, RSSItem } from '@/types';
 
-const parser = new Parser();
-
-// Finlex RSS feed URL for Finnish legislation
-const FINLEX_RSS_URL = 'https://www.finlex.fi/fi/laki/ajantasa/feed';
+// Finlex Open Data API endpoint
+const FINLEX_API_BASE = 'https://opendata.finlex.fi/finlex/avoindata/v1';
+const FINLEX_API_LIST = `${FINLEX_API_BASE}/akn/fi/act/statute/list`;
 
 // Keywords to filter for chemical-related regulations
 const CHEMICAL_KEYWORDS = [
@@ -24,30 +22,105 @@ const CHEMICAL_KEYWORDS = [
   'haitalliset aineet', // harmful substances
 ];
 
+interface FinlexApiItem {
+  akn_uri: string;
+  status: string;
+}
+
 /**
- * Fetch and parse Finlex RSS feed
+ * Fetch statute details from Finlex API
+ */
+async function fetchStatuteDetails(aknUri: string): Promise<any> {
+  try {
+    const response = await fetch(aknUri, {
+      headers: {
+        'User-Agent': 'regulatory-intelligence-engine',
+        'Accept': 'application/xml',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API returned status ${response.status}`);
+    }
+
+    const xml = await response.text();
+    return parseXmlTitle(xml);
+  } catch (error) {
+    console.error(`Failed to fetch statute details from ${aknUri}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Extract title and date from Akoma Ntoso XML
+ */
+function parseXmlTitle(xml: string): { title: string; date: string } | null {
+  try {
+    // Extract title from FRBRalias or MainTitle elements
+    const titleMatch = xml.match(/<FRBRalias\s+name="[^"]*"\s+value="([^"]*)"/);
+    const title = titleMatch ? titleMatch[1] : 'Statute';
+
+    // Extract date from FRBRWork/FRBRdate
+    const dateMatch = xml.match(/<FRBRdate\s+date="([^"]*)"/) ||
+                      xml.match(/<issued\s+date="([^"]*)"/) ||
+                      xml.match(/<date\s+date="([^"]*)"/);
+    const date = dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString();
+
+    return { title, date };
+  } catch (error) {
+    console.error('Failed to parse XML:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch and parse Finlex statutes from REST API
  */
 export async function fetchFinlexRSS(): Promise<RSSItem[]> {
   try {
-    const feed = await parser.parseURL(FINLEX_RSS_URL);
-    console.log(`Fetched ${feed.items.length} items from Finlex RSS`);
+    // Simple API call - just get latest statutes
+    const url = `${FINLEX_API_LIST}?format=json`;
+    console.log(`Fetching from Finlex API: ${url}`);
 
-    const items: RSSItem[] = feed.items
-      .filter((item) => isChemicalRelated(item.title || ''))
-      .map((item) => ({
-        title: item.title || '',
-        link: item.link || '',
-        pubDate: item.pubDate || new Date().toISOString(),
-        description: item.description || '',
-        guid: item.guid || item.link || item.title || '',
-      }));
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'regulatory-intelligence-engine',
+        'Accept': 'application/json',
+      },
+    });
 
-    console.log(
-      `Filtered to ${items.length} chemical-related regulations`
-    );
-    return items;
+    if (!response.ok) {
+      throw new Error(`API returned status ${response.status}`);
+    }
+
+    const items: FinlexApiItem[] = await response.json();
+    console.log(`Fetched ${items.length} items from Finlex API`);
+
+    // Fetch details for each statute and filter for chemical keywords
+    const results: RSSItem[] = [];
+    let checked = 0;
+
+    for (const item of items) {
+      // Only check first 20 to avoid too many API calls
+      if (checked >= 20) break;
+      checked++;
+
+      const details = await fetchStatuteDetails(item.akn_uri);
+      if (details && isChemicalRelated(details.title)) {
+        results.push({
+          title: details.title,
+          link: item.akn_uri,
+          pubDate: details.date,
+          description: details.title,
+          guid: item.akn_uri,
+        });
+      }
+    }
+
+    console.log(`Filtered to ${results.length} chemical-related regulations from ${checked} checked`);
+    return results;
   } catch (error) {
-    console.error('Failed to fetch Finlex RSS:', error);
+    console.error('Failed to fetch Finlex regulations:', error);
     throw error;
   }
 }
@@ -124,15 +197,15 @@ export async function getFreshRegulations(): Promise<Partial<Regulation>[]> {
 }
 
 /**
- * Test Finlex RSS feed connection
+ * Test Finlex API connection
  */
 export async function testFinlexConnection(): Promise<boolean> {
   try {
     const items = await fetchFinlexRSS();
-    console.log(`Successfully connected to Finlex RSS. Found ${items.length} items.`);
-    return items.length > 0;
+    console.log(`Successfully connected to Finlex API. Found ${items.length} items.`);
+    return true; // Even if no chemical items found, API is accessible
   } catch (error) {
-    console.error('Failed to connect to Finlex RSS:', error);
+    console.error('Failed to connect to Finlex API:', error);
     return false;
   }
 }
