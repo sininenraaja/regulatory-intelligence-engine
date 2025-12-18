@@ -4,7 +4,7 @@ import { Regulation, RSSItem } from '@/types';
 const parser = new Parser();
 
 // Finlex RSS feed URL for Finnish legislation
-const FINLEX_RSS_URL = 'https://finlex.fi/fi/laki/ajantasa/feed';
+const FINLEX_RSS_URL = 'https://www.finlex.fi/fi/laki/ajantasa/feed';
 
 // Keywords to filter for chemical-related regulations
 const CHEMICAL_KEYWORDS = [

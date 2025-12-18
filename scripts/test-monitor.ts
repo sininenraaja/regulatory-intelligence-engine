@@ -13,8 +13,12 @@
  *
  * Usage:
  *   npm run test:monitor
- *   FINLEX_MOCK=true npm run test:monitor  (use mock data)
  */
+
+// Load environment variables from .env.local
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 import { createScopedLogger } from '../lib/logger';
 import { initializeDatabase, regulationExists, insertRegulation, updateRegulationAnalysis, getCachedAnalysis } from '../lib/db/operations';
